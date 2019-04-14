@@ -3300,7 +3300,7 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 	struct mdss_panel_info *pinfo;
 	bool wait_for_finish, wb_change = false;
 	int ret = -EPERM;
-	u32 old_xres = 0, old_yres = 0, old_format = 0;
+	u32 old_xres, old_yres, old_format;
 
 	if (!mfd || (!mfd->op_enable)) {
 		pr_err("mfd is NULL or operation not permitted\n");
