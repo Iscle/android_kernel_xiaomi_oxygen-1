@@ -163,7 +163,7 @@ struct smbchg_chip {
 	bool				screen_on;
 	bool				checking_in_progress;
 	bool				screen_on_timeout;
-	struct mutex		screen_lock;
+	struct mutex			screen_lock;
 #endif
 	/* wipower params */
 	struct ilim_map			wipower_default;
@@ -1894,7 +1894,7 @@ static int smbchg_set_usb_current_max(struct smbchg_chip *chip,
 	}
 	pr_smb(PR_STATUS, "USB current_ma = %d\n", current_ma);
 
-	if (current_ma == SUSPEND_CURRENT_MA) {
+	if (current_ma <= SUSPEND_CURRENT_MA) {
 		/* suspend the usb if current <= 2mA */
 		rc = vote(chip->usb_suspend_votable, USB_EN_VOTER, true, 0);
 		chip->usb_max_current_ma = 0;
@@ -3954,7 +3954,7 @@ static void check_battery_type(struct smbchg_chip *chip)
 }
 
 #define DEFAULT_DCP_MA		1500
-#define FLOAT_CHARGER_MA		1000
+#define FLOAT_CHARGER_MA	1000
 static void smbchg_external_power_changed(struct power_supply *psy)
 {
 	struct smbchg_chip *chip = container_of(psy,
@@ -5333,7 +5333,7 @@ static void increment_aicl_count(struct smbchg_chip *chip)
 
 static int wait_for_usbin_uv(struct smbchg_chip *chip, bool high)
 {
-	int rc = 0;
+	int rc;
 	int tries = 3;
 	struct completion *completion = &chip->usbin_uv_lowered;
 	bool usbin_uv;
@@ -5363,7 +5363,7 @@ static int wait_for_usbin_uv(struct smbchg_chip *chip, bool high)
 
 static int wait_for_src_detect(struct smbchg_chip *chip, bool high)
 {
-	int rc = 0;
+	int rc;
 	int tries = 3;
 	struct completion *completion = &chip->src_det_lowered;
 	bool src_detect;
@@ -6030,7 +6030,7 @@ static void update_typec_capability_status(struct smbchg_chip *chip,
 			pr_err("typec failed to set current max rc=%d\n", rc);
 	}
 
-	pr_info("changing ICL from %dma to %dma\n", chip->typec_current_ma,
+	pr_debug("changing ICL from %dma to %dma\n", chip->typec_current_ma,
 			val->intval);
 	chip->typec_current_ma = val->intval;
 	smbchg_change_usb_supply_type(chip, chip->usb_supply_type);

@@ -19,18 +19,29 @@
 &int_codec {
 	status = "okay";
 	qcom,model = "msm8953-snd-card-mtp";
-	qcom,msm-hs-micbias-type = "external";
 	qcom,msm-ext-pa = "quinary";
-	/delete-property/ qcom,hdmi-dba-codec-rx;
-	/delete-property/ qcom,cdc-us-euro-gpios;
-
 	qcom,msm-mbhc-hphl-swh = <1>;
 	qcom,msm-mbhc-gnd-swh = <1>;
+	qcom,msm-hs-micbias-type = "external";
+	qcom,audio-routing =
+		"RX_BIAS", "MCLK",
+		"SPK_RX_BIAS", "MCLK",
+		"INT_LDO_H", "MCLK",
+		"MIC BIAS External", "Handset Mic",
+		"MIC BIAS External2", "Headset Mic",
+		"MIC BIAS External", "Secondary Mic",
+		"AMIC1", "MIC BIAS External",
+		"AMIC2", "MIC BIAS External2",
+		"AMIC3", "MIC BIAS External";
+
+	/delete-property/ qcom,hdmi-dba-codec-rx;	
+	/delete-property/ qcom,cdc-us-euro-gpios;
 
 	qcom,msm-gpios =
 		"pri_i2s",
 		"quin_i2s",
 		"comp_gpio";
+
 	qcom,pinctrl-names =
 		"all_off",
 		"pri_i2s_act",
@@ -96,12 +107,35 @@
 	/delete-property/ qcom,msm-vdd-wsa-switch-current;
 };
 
-&pm8953_diangu_dig {
-	status = "okay";
-};
+&wcd9335 {
+	clock-names = "wcd_clk";
+	clocks = <&clock_audio clk_audio_pmi_clk>;
 
-&pm8953_diangu_analog {
-	status = "okay";
+	/delete-property/ qcom,cdc-reset-gpio;	
+
+ 	/delete-property/ cdc-vdd-buck-supply;	
+	/delete-property/ qcom,cdc-vdd-buck-voltage;	
+	/delete-property/ qcom,cdc-vdd-buck-current;	
+
+ 	/delete-property/ cdc-buck-sido-supply;	
+	/delete-property/ qcom,cdc-buck-sido-voltage;	
+	/delete-property/ qcom,cdc-buck-sido-current;	
+
+ 	/delete-property/ cdc-vdd-tx-h-supply;	
+	/delete-property/ qcom,cdc-vdd-tx-h-voltage;	
+	/delete-property/ qcom,cdc-vdd-tx-h-current;	
+
+ 	/delete-property/ cdc-vdd-rx-h-supply;	
+	/delete-property/ qcom,cdc-vdd-rx-h-voltage;	
+	/delete-property/ qcom,cdc-vdd-rx-h-current;	
+
+ 	/delete-property/ cdc-vdd-px-supply;	
+	/delete-property/ qcom,cdc-vdd-px-voltage;	
+	/delete-property/ qcom,cdc-vdd-px-current;	
+
+ 	/delete-property/ cdc-vdd-mic-bias-supply;	
+	/delete-property/ qcom,cdc-vdd-mic-bias-voltage;	
+	/delete-property/ qcom,cdc-vdd-mic-bias-current;
 };
 
 &wsa881x_i2c_e {
@@ -118,12 +152,4 @@
 
 &wsa881x_i2c_45 {
 	status = "disabled";
-};
-
-&wcd9335 {
-	/delete-property/ cdc-vdd-buck-supply;
-	/delete-property/ cdc-buck-sido-supply;
-	/delete-property/ cdc-vdd-tx-h-supply;
-	/delete-property/ cdc-vdd-rx-h-supply;
-	/delete-property/ cdc-vdd-px-supply;
 };

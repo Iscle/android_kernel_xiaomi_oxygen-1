@@ -14,11 +14,8 @@
 
 #include "msm8953-oxygen-audio.dtsi"
 #include "msm8953-oxygen-camera-sensor-mtp.dtsi"
-//#include "msm8953-oxygen-mdss-panels.dtsi"
+#include "msm8953-oxygen-mdss-panels.dtsi"
 #include "msm8953-oxygen-pinctrl.dtsi"
-
-#include "dsi-panel-tianma-r63350-1080p-video.dtsi"
-#include "dsi-panel-auo-r61322-1080p-video.dtsi"
 
 / {
 	aliases {

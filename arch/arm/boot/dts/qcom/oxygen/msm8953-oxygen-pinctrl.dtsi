@@ -16,6 +16,7 @@
 	/delete-node/ cci1_active;
 	/delete-node/ cci1_suspend;
 };
+
 &gpio_key_active {
 	mux {
 		pins = "gpio85";
@@ -28,6 +29,7 @@
 		bias-pull-up;
 	};
 };
+
 &gpio_key_suspend {
 	mux {
 		pins = "gpio85";
@@ -263,7 +265,7 @@
 
 &i2c_2_sleep {
 	mux {
-		pins = "gpio35";
+		function = "blsp_i2c2";
 	};
 };
 

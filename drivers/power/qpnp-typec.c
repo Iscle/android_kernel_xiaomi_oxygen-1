@@ -55,11 +55,9 @@
 
 #define TYPEC_SW_CTL_REG(base)		(base + 0x52)
 
-/* only support USB2.0, so set default mode current to 500mA */
-#define TYPEC_STD_MA                   500
+#define TYPEC_STD_MA			900
 #define TYPEC_MED_MA			1500
-/* set TYPEC_HIGH_MA from 3A to 1.5A for more safety */
-#define TYPEC_HIGH_MA			1500
+#define TYPEC_HIGH_MA			3000
 
 #define TRYSNK_TIMEOUT_MS		600
 
@@ -129,7 +127,7 @@ struct qpnp_typec_chip {
 	struct dual_role_phy_desc	dr_desc;
 	struct delayed_work		role_reversal_check;
 	struct typec_wakeup_source	role_reversal_wakeup_source;
-	bool			try_snk_attempt;
+	bool				try_snk_attempt;
 	struct delayed_work		typec_wdog_work;
 #ifdef CONFIG_TYPEC_DRIVER
 	struct typec_dev c_dev;
@@ -341,7 +339,7 @@ static int qpnp_typec_force_mode(struct qpnp_typec_chip *chip, int mode)
 			pr_err("Failed to force typeC mode rc=%d\n", rc);
 		} else {
 			chip->force_mode = mode;
-			pr_info("Forced mode: %s\n",
+			pr_debug("Forced mode: %s\n",
 					mode_text[chip->force_mode]);
 		}
 	}
@@ -491,7 +489,7 @@ static irqreturn_t vrd_changed_handler(int irq, void *_chip)
 	u8 reg;
 	struct qpnp_typec_chip *chip = _chip;
 
-	pr_info("vrd changed triggered\n");
+	pr_debug("vrd changed triggered\n");
 
 	mutex_lock(&chip->typec_lock);
 	rc = qpnp_typec_read(chip, &reg, TYPEC_UFP_STATUS_REG(chip->base), 1);
@@ -512,7 +510,7 @@ static irqreturn_t vrd_changed_handler(int irq, void *_chip)
 					rc);
 	}
 
-	pr_info("UFP status reg = 0x%x old current = %dma new current = %dma\n",
+	pr_debug("UFP status reg = 0x%x old current = %dma new current = %dma\n",
 			reg, old_current, chip->current_ma);
 
 out:
@@ -533,10 +531,7 @@ static irqreturn_t ufp_detect_handler(int irq, void *_chip)
 	u8 reg;
 	struct qpnp_typec_chip *chip = _chip;
 
-	pr_info("ufp detect triggered\n");
-
-	/* cancel watch dog work */
-	cancel_delayed_work(&chip->typec_wdog_work);
+	pr_debug("ufp detect triggered\n");
 
 	mutex_lock(&chip->typec_lock);
 	if (chip->try_snk_attempt) {
@@ -580,7 +575,7 @@ static irqreturn_t ufp_detach_handler(int irq, void *_chip)
 	int rc;
 	struct qpnp_typec_chip *chip = _chip;
 
-	pr_info("ufp detach triggered\n");
+	pr_debug("ufp detach triggered\n");
 
 	mutex_lock(&chip->typec_lock);
 	if (chip->try_snk_attempt)
@@ -625,7 +620,7 @@ static irqreturn_t dfp_detect_handler(int irq, void *_chip)
 	u8 reg[2];
 	struct qpnp_typec_chip *chip = _chip;
 
-	pr_info("dfp detect trigerred\n");
+	pr_debug("dfp detect trigerred\n");
 
 	mutex_lock(&chip->typec_lock);
 	rc = qpnp_typec_read(chip, reg, TYPEC_UFP_STATUS_REG(chip->base), 2);
@@ -686,7 +681,7 @@ static irqreturn_t dfp_detach_handler(int irq, void *_chip)
 	int rc;
 	struct qpnp_typec_chip *chip = _chip;
 
-	pr_info("dfp detach triggered\n");
+	pr_debug("dfp detach triggered\n");
 
 	mutex_lock(&chip->typec_lock);
 	rc = qpnp_typec_handle_detach(chip);
